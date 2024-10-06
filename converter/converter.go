@@ -11,16 +11,14 @@ import (
 
 const ANSI_FOREGROUND = "\x1b[38;2;"
 const ANSI_RESET = "\x1b[0m"
-const FONT_ASPECT_RATIO = 0.46
-const CHAR = "█"
 
 func RGBtoAnsi(r, g, b int) string {
 	return ANSI_FOREGROUND + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m"
 }
 
-func Convert(img image.Image, dim float64) string {
+func Convert(img image.Image, dim float64, char string, ratio float64) string {
 	// assume square image
-	h := dim * FONT_ASPECT_RATIO
+	h := dim * ratio
 	img = resize.Resize(uint(dim), uint(h), img, resize.Lanczos3)
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
@@ -34,7 +32,7 @@ func Convert(img image.Image, dim float64) string {
 
 			colorStr := RGBtoAnsi(int(r), int(g), int(b))
 
-			output += colorStr + CHAR
+			output += colorStr + char
 		}
 		output += ANSI_RESET + "\n"
 	}
