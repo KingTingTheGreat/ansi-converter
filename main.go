@@ -22,7 +22,7 @@ const DIM = "dim="
 const CHAR = "char="
 const RATIO = "ratio="
 
-var OPTS = []string{FILE, DIM}
+var OPTS = []string{FILE, DIM, CHAR, RATIO}
 
 func parse_args() (string, float64, string, float64, error) {
 	var filePath string
