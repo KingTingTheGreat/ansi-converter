@@ -24,46 +24,66 @@ const RATIO = "ratio="
 
 var OPTS = []string{FILE, DIM, CHAR, RATIO}
 
-func parse_args() (string, float64, string, float64, error) {
-	var filePath string
-	dim := DEFAULT_DIM
-	char := DEFAULT_CHAR
-	ratio := DEFAULT_RATIO
+type Config struct {
+	FilePath  string
+	Dim       float64
+	Char      string
+	FontRatio float64
+}
 
-	for _, arg := range os.Args[1:] {
+func parse_args(cfg Config) (Config, error) {
+	for i, arg := range os.Args[1:] {
+		isOpt := false
 		for _, opt := range OPTS {
 			if strings.HasPrefix(arg, opt) {
+				isOpt = true
 				val := strings.TrimLeft(arg, opt)
 				switch opt {
 				case FILE:
-					filePath = val
+					cfg.FilePath = val
 				case DIM:
 					newDim, err := strconv.ParseFloat(val, 64)
 					if err == nil {
-						dim = newDim
+						cfg.Dim = newDim
+					} else {
+						return Config{}, fmt.Errorf("invalid dim")
 					}
 				case CHAR:
-					char = string(val[0])
+					if len(val) == 0 {
+						return Config{}, fmt.Errorf("invalid char")
+					}
+					cfg.Char = string(val[0])
 				case RATIO:
 					newRatio, err := strconv.ParseFloat(val, 64)
 					if err == nil {
-						ratio = newRatio
+						cfg.FontRatio = newRatio
+					} else {
+						return Config{}, fmt.Errorf("invalid ratio")
 					}
 				}
 			}
 		}
+		if i == 0 && !isOpt {
+			cfg.FilePath = arg
+		}
 	}
 
-	return filePath, dim, char, ratio, nil
+	return cfg, nil
 }
 
 func main() {
-	filePath, dim, char, ratio, err := parse_args()
+	config := Config{
+		FilePath:  "",
+		Dim:       DEFAULT_DIM,
+		Char:      DEFAULT_CHAR,
+		FontRatio: DEFAULT_RATIO,
+	}
+	config, err := parse_args(config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(config.FilePath)
 	if err != nil {
 		log.Fatal("error opening file")
 	}
@@ -74,6 +94,6 @@ func main() {
 		log.Fatal("error decoding image")
 	}
 
-	x := converter.Convert(img, dim, char, ratio)
+	x := converter.Convert(img, config.Dim, config.Char, config.FontRatio)
 	fmt.Println(x)
 }
