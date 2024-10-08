@@ -12,6 +12,8 @@ import (
 const ANSI_FOREGROUND = "\x1b[38;2;"
 const ANSI_RESET = "\x1b[0m"
 
+const TEST = "test"
+
 func RGBtoAnsi(r, g, b int) string {
 	return ANSI_FOREGROUND + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m"
 }
