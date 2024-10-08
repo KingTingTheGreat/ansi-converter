@@ -11,11 +11,8 @@ import (
 	"strings"
 
 	"github.com/kingtingthegreat/ansi-converter/converter"
+	"github.com/kingtingthegreat/ansi-converter/defaults"
 )
-
-const DEFAULT_DIM = 40.
-const DEFAULT_CHAR = "█"
-const DEFAULT_RATIO = 0.46
 
 const FILE = "file="
 const DIM = "dim="
@@ -74,9 +71,9 @@ func parse_args(cfg Config) (Config, error) {
 func main() {
 	config := Config{
 		FilePath:  "",
-		Dim:       DEFAULT_DIM,
-		Char:      DEFAULT_CHAR,
-		FontRatio: DEFAULT_RATIO,
+		Dim:       defaults.DEFAULT_DIM,
+		Char:      defaults.DEFAULT_CHAR,
+		FontRatio: defaults.DEFAULT_RATIO,
 	}
 	config, err := parse_args(config)
 	if err != nil {
