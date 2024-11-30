@@ -19,8 +19,6 @@ const DIM = "dim="
 const CHAR = "char="
 const RATIO = "ratio="
 
-var OPTS = []string{FILE, DIM, CHAR, RATIO}
-
 type Config struct {
 	FilePath  string
 	Dim       float64
@@ -29,39 +27,36 @@ type Config struct {
 }
 
 func parse_args(cfg Config) (Config, error) {
-	for i, arg := range os.Args[1:] {
-		isOpt := false
-		for _, opt := range OPTS {
-			if strings.HasPrefix(arg, opt) {
-				isOpt = true
-				val := strings.TrimLeft(arg, opt)
-				switch opt {
-				case FILE:
-					cfg.FilePath = val
-				case DIM:
-					newDim, err := strconv.ParseFloat(val, 64)
-					if err == nil {
-						cfg.Dim = newDim
-					} else {
-						return Config{}, fmt.Errorf("invalid dim")
-					}
-				case CHAR:
-					if len(val) == 0 {
-						return Config{}, fmt.Errorf("invalid char")
-					}
-					cfg.Char = string(val[0])
-				case RATIO:
-					newRatio, err := strconv.ParseFloat(val, 64)
-					if err == nil {
-						cfg.FontRatio = newRatio
-					} else {
-						return Config{}, fmt.Errorf("invalid ratio")
-					}
+	for _, argValStr := range os.Args[1:] {
+		argVal := strings.SplitN(argValStr, "=", 2)
+		arg := argVal[0]
+		if len(argVal) == 1 {
+			cfg.FilePath = arg
+		} else {
+			val := argVal[1]
+			switch arg {
+			case FILE:
+				cfg.FilePath = val
+			case DIM:
+				newDim, err := strconv.ParseFloat(val, 64)
+				if err == nil {
+					cfg.Dim = newDim
+				} else {
+					return Config{}, fmt.Errorf("invalid dim")
+				}
+			case CHAR:
+				if len(val) == 0 {
+					return Config{}, fmt.Errorf("invalid char")
+				}
+				cfg.Char = string(val[0])
+			case RATIO:
+				newRatio, err := strconv.ParseFloat(val, 64)
+				if err == nil {
+					cfg.FontRatio = newRatio
+				} else {
+					return Config{}, fmt.Errorf("invalid ratio")
 				}
 			}
-		}
-		if i == 0 && !isOpt {
-			cfg.FilePath = arg
 		}
 	}
 
