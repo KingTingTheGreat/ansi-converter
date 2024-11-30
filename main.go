@@ -14,10 +14,10 @@ import (
 	"github.com/kingtingthegreat/ansi-converter/defaults"
 )
 
-const FILE = "file="
-const DIM = "dim="
-const CHAR = "char="
-const RATIO = "ratio="
+const FILE = "file"
+const DIM = "dim"
+const CHAR = "char"
+const RATIO = "ratio"
 
 type Config struct {
 	FilePath  string
