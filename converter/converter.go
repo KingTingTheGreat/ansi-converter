@@ -17,26 +17,16 @@ func RGBtoAnsi(r, g, b int) string {
 	return ANSI_FOREGROUND + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m"
 }
 
-type ConvertConfig struct {
-	Dim           float64
-	Char          string
-	FontRatio     float64
-	PaddingTop    int
-	PaddingRight  int
-	PaddingBottom int
-	PaddingLeft   int
-}
-
-func Convert(img image.Image, cfg *ConvertConfig) string {
+func Convert(img image.Image, char string, dim, fontRatio float64, paddingTop, paddingRight, paddingBottom, paddingLeft int) string {
 	// assume square image
-	h := cfg.Dim * cfg.FontRatio
-	img = resize.Resize(uint(cfg.Dim), uint(h), img, resize.Lanczos3)
+	h := dim * fontRatio
+	img = resize.Resize(uint(dim), uint(h), img, resize.Lanczos3)
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 
-	output := strings.Repeat("\n", cfg.PaddingTop)
+	output := strings.Repeat("\n", paddingTop)
 	for y := 0; y < height; y++ {
-		output += strings.Repeat(" ", cfg.PaddingLeft)
+		output += strings.Repeat(" ", paddingLeft)
 		for x := 0; x < width; x++ {
 			pixel := img.At(x, y)
 			r, g, b, _ := pixel.RGBA()
@@ -44,14 +34,14 @@ func Convert(img image.Image, cfg *ConvertConfig) string {
 
 			colorStr := RGBtoAnsi(int(r), int(g), int(b))
 
-			output += colorStr + cfg.Char
+			output += colorStr + char
 		}
-		output += strings.Repeat(" ", cfg.PaddingRight)
+		output += strings.Repeat(" ", paddingRight)
 		if y != height-1 {
 			output += ANSI_RESET + "\n"
 		}
 	}
-	output += strings.Repeat("\n", cfg.PaddingBottom)
+	output += strings.Repeat("\n", paddingBottom)
 
 	return output
 }
