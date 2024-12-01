@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kingtingthegreat/ansi-converter/config"
 	"github.com/nfnt/resize"
 )
 
@@ -18,7 +17,17 @@ func RGBtoAnsi(r, g, b int) string {
 	return ANSI_FOREGROUND + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m"
 }
 
-func Convert(img image.Image, cfg *config.Config) string {
+type ConvertConfig struct {
+	Dim           float64
+	Char          string
+	FontRatio     float64
+	PaddingTop    int
+	PaddingRight  int
+	PaddingBottom int
+	PaddingLeft   int
+}
+
+func Convert(img image.Image, cfg *ConvertConfig) string {
 	// assume square image
 	h := cfg.Dim * cfg.FontRatio
 	img = resize.Resize(uint(cfg.Dim), uint(h), img, resize.Lanczos3)
