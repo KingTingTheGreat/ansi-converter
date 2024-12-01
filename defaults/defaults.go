@@ -3,3 +3,8 @@ package defaults
 const DEFAULT_DIM = 40.
 const DEFAULT_CHAR = "█"
 const DEFAULT_RATIO = 0.46
+const DEFAULT_PADDING = 0
+const DEFAULT_PADDING_TOP = 0
+const DEFAULT_PADDING_RIGHT = 0
+const DEFAULT_PADDING_BOTTON = 0
+const DEFAULT_PADDING_LEFT = 0
