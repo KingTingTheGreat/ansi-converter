@@ -37,8 +37,10 @@ func Convert(img image.Image, char string, dim, fontRatio float64, paddingTop, p
 			output += colorStr + char
 		}
 		output += strings.Repeat(" ", paddingRight)
-		if y != height-1 {
-			output += ANSI_RESET + "\n"
+		if y == height-1 {
+			output += ANSI_RESET
+		} else {
+			output += "\n"
 		}
 	}
 	output += strings.Repeat("\n", paddingBottom)
