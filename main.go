@@ -31,6 +31,6 @@ func main() {
 		log.Fatal("error decoding image")
 	}
 
-	x := converter.Convert(img, cfg.Char, cfg.Dim, cfg.FontRatio, cfg.PaddingTop, cfg.PaddingRight, cfg.PaddingBottom, cfg.PaddingLeft)
+	x := converter.Convert(img, cfg)
 	fmt.Println(x)
 }

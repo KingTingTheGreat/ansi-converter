@@ -4,9 +4,11 @@ import (
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
+	"log"
 	"strconv"
 	"strings"
 
+	"github.com/kingtingthegreat/ansi-converter/config"
 	"github.com/nfnt/resize"
 )
 
@@ -17,16 +19,20 @@ func RGBtoAnsi(r, g, b int) string {
 	return ANSI_FOREGROUND + strconv.Itoa(r) + ";" + strconv.Itoa(g) + ";" + strconv.Itoa(b) + "m"
 }
 
-func Convert(img image.Image, char string, dim, fontRatio float64, paddingTop, paddingRight, paddingBottom, paddingLeft int) string {
+func Convert(img image.Image, cfg *config.Config) string {
 	// assume square image
-	h := dim * fontRatio
-	img = resize.Resize(uint(dim), uint(h), img, resize.Lanczos3)
+	h := cfg.Dim * cfg.FontRatio
+	img = resize.Resize(uint(cfg.Dim), uint(h), img, resize.Lanczos3)
 	bounds := img.Bounds()
 	width, height := bounds.Max.X, bounds.Max.Y
 
-	output := strings.Repeat("\n", paddingTop)
+	if width != int(cfg.Dim) {
+		log.Fatal("does not match", cfg.Dim, width)
+	}
+
+	output := strings.Repeat("\n", cfg.PaddingTop)
 	for y := 0; y < height; y++ {
-		output += strings.Repeat(" ", paddingLeft)
+		output += strings.Repeat(" ", cfg.PaddingLeft)
 		for x := 0; x < width; x++ {
 			pixel := img.At(x, y)
 			r, g, b, _ := pixel.RGBA()
@@ -34,16 +40,16 @@ func Convert(img image.Image, char string, dim, fontRatio float64, paddingTop, p
 
 			colorStr := RGBtoAnsi(int(r), int(g), int(b))
 
-			output += colorStr + char
+			output += colorStr + cfg.Char
 		}
-		output += strings.Repeat(" ", paddingRight)
+		output += strings.Repeat(" ", cfg.PaddingRight)
 		if y == height-1 {
 			output += ANSI_RESET
 		} else {
 			output += "\n"
 		}
 	}
-	output += strings.Repeat("\n", paddingBottom)
+	output += strings.Repeat("\n", cfg.PaddingBottom)
 
 	return output
 }
